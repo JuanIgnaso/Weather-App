@@ -1,9 +1,12 @@
 //API KEY - b36342eefc788b8e4ccb10ae5c94bcd3
+//ISO country codes - https://www.iso.org/obp/ui/#search
+
 
 import { getDayOfWeek , getMonthOfYear } from "./Dates.js";
 
 const formulario = document.getElementById('formularioTiempo');
 const ciudadInput = formulario.querySelector('#ciudadInput');
+const countryCode = formulario.querySelector('#countryCode');
 const actual = document.querySelector('#current');
 const api_key = 'b36342eefc788b8e4ccb10ae5c94bcd3';
 let screen = document.querySelector('#weather-screen');
@@ -16,9 +19,10 @@ const nodata = document.querySelector('#no-data');
 formulario.addEventListener('submit',async event => {
     event.preventDefault();//<- prevenir la recarga de la página al hacer un submit
     const ciudad = ciudadInput.value;
+    const codPais = countryCode.value;
     if(ciudad){
         try {
-            const infoTiempo = await getInfoTiempo(ciudad);
+            const infoTiempo = await getInfoTiempo(ciudad,codPais);
             mostrarInfoTiempo(infoTiempo);
         } catch (error) {
             //mostrar el error
@@ -30,14 +34,14 @@ formulario.addEventListener('submit',async event => {
 });
 
 //Buscar información de lo que busca el usuario
-async function getInfoTiempo(poblacion){
+async function getInfoTiempo(poblacion,codPais){
     /*
     Parámetros adicionales:
     units='valor' <- para cambiar las medias
     lang='código idioma' <- para recibirlo en idioma a elegir
     */
-    const current = `https://api.openweathermap.org/data/2.5/weather?q=${poblacion}&appid=${api_key}&units=metric&lang=sp `;
-    const forecast = `https://api.openweathermap.org/data/2.5/forecast?q=${poblacion}&appid=${api_key}&units=metric&lang=sp `;//previsión a 5 días
+    const current = `https://api.openweathermap.org/data/2.5/weather?q=${poblacion}${codPais.trim() === 0 ? '': ',' + codPais}&appid=${api_key}&units=metric&lang=sp `;
+    const forecast = `https://api.openweathermap.org/data/2.5/forecast?q=${poblacion}${codPais.trim() === 0 ? '': ',' + codPais}&appid=${api_key}&units=metric&lang=sp `;//previsión a 5 días
 
     const responseCurrent = await fetch(current);
     const responseForecast = await fetch(forecast);
@@ -55,21 +59,28 @@ async function getInfoTiempo(poblacion){
  * @param {object} informacion
  */
 function mostrarInfoTiempo(informacion){
+    console.log(informacion.current);
     table.classList.contains('hidden') ? table.classList.toggle('hidden') : '';
     document.querySelector('#mensaje_error').innerHTML = '';
     const{
         name:city,
         main:{temp,feels_like,humidity},
-        weather:[{id,description,icon}]
+        weather:[{id,description,icon}],
+        clouds:{all},
     } = informacion.current;
 
-    current.classList.contains('hidden') ? current.classList.toggle('hidden') : '';
+    if(current.classList.contains('hidden')){
+        current.classList.toggle('hidden');
+        current.classList.toggle('show');
+    }
 
     document.querySelector('#city').textContent = city; //display del nombre de la Ciudad
     document.querySelector('#temp').textContent = `${temp}ºC`; //display de la temperatura
     document.querySelector('#feels_like').textContent = `${feels_like}ºC`; //display de la sensación térmica
     document.querySelector('#humidity').textContent = `${humidity}%`; //display del porcentaje de humedad
     document.querySelector('#description').textContent = description[0].toUpperCase() + description.slice(1).toLowerCase();//descripción del tiempo
+    document.querySelector('#clouds').textContent = `${all}%`;//porcentaje de nubes
+    document.querySelector('#rain').textContent = `${informacion.current.rain == undefined ? '0.0' : informacion.current.rain['1h']}mm`;
     document.querySelector('#icono').setAttribute('src', `https://openweathermap.org/img/wn/${icon}@2x.png`); //icono del tiempo
 
     if(screen.classList.contains('neutral')){
@@ -105,9 +116,11 @@ function mostrarPrevision(informacion){
     let currRow = 0;
     let row  = prevTableBody.insertRow(currRow);
     let cell = row.insertCell(0);
-    cell.setAttribute('class','font-bold');
+    let temp_max = -100;
+    let temp_min = 999;
+    cell.setAttribute('class','font-bold text-center');
     let currCell =  1;
-    cell.innerHTML = `${getDayOfWeek(fecha.getDay())} ${fecha.getDate()} de ${getMonthOfYear(fecha.getMonth())}`;
+    cell.innerHTML = `<p>${getDayOfWeek(fecha.getDay())} ${fecha.getDate()} de ${getMonthOfYear(fecha.getMonth())}</p>`;
     while(currCell < getStartingPoint(new Date(informacion[0].dt_txt).getHours()) + 1){
         cell= row.insertCell(currCell);
         currCell++;
@@ -120,14 +133,19 @@ function mostrarPrevision(informacion){
             currRow++;
             row = prevTableBody.insertRow(currRow);
             cell = row.insertCell(0);
-            cell.innerHTML = `${getDayOfWeek(currDate.getDay())} ${currDate.getDate()} de ${getMonthOfYear(currDate.getMonth())}`;
-            cell.setAttribute('class','font-bold');
+            cell.innerHTML = `<p>${getDayOfWeek(currDate.getDay())} ${currDate.getDate()} de ${getMonthOfYear(currDate.getMonth())}</p>`;
+            cell.setAttribute('class','font-bold text-center');
+            cell.setAttribute('id',`dia${currDate.getDate()}`);
             currCell = 1;
             dia = currDay;
+            temp_max = -100;
+            temp_min = 999;
         }
+
+
         cell = row.insertCell(currCell);
         cell.addEventListener('click',function(){showModal(informacion[index])});
-        cell.innerHTML = `<img class="m-auto hover:cursor-pointer"  src=" https://openweathermap.org/img/wn/${informacion[index].weather[0].icon}@2x.png" alt=""></img>`;
+        cell.innerHTML = `<img class="m-auto hover:cursor-pointer"  src=" https://openweathermap.org/img/wn/${informacion[index].weather[0].icon}@2x.png" alt=""></img><p class="text-center font-bold">${Math.round(informacion[index].main.temp) + 'ºC' }</p>`;
         currCell++;
 
     }
@@ -191,7 +209,7 @@ function showModal(e){
       },
       {
         prop: "Prov Lluvia",
-        value: `${e.pop}%`,
+        value: `${Math.round(e.pop * 100)}%`,
         icon: '<span class="material-symbols-outlined"> umbrella </span>'
       },
       {
@@ -242,6 +260,7 @@ function mostrarError(texto){
     if(!screen.classList.contains('neutral')){screen.classList.toggle('neutral');}
     if(!current.classList.contains('hidden')){
         current.classList.toggle('hidden');
+        current.classList.remove('show');
     }
     document.querySelector('#mensaje_error').innerHTML = texto
 }
