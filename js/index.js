@@ -3,23 +3,74 @@
 
 
 import { getDayOfWeek , getMonthOfYear } from "./Dates.js";
+import { loadContentInModal } from "./modalContent.js";
 
+//formulario donde se escribe para buscar
 const formulario = document.getElementById('formularioTiempo');
-const ciudadInput = formulario.querySelector('#ciudadInput');
-const countryCode = formulario.querySelector('#countryCode');
-const actual = document.querySelector('#current');
+
+//input donde se escribe la búsqueda
+const ciudadInput = document.querySelector('#ciudadInput');
+
+//llave de la API
 const api_key = 'b36342eefc788b8e4ccb10ae5c94bcd3';
+
+//Pantalla donde se muestra el tiempo
 let screen = document.querySelector('#weather-screen');
+
+//Tabla donde se muestran las previsiones del tiempo a 5 días
 let prevTableBody = document.querySelector('#tableBody');
 const table = document.querySelector('#tableContent');
 const nodata = document.querySelector('#no-data');
 
+//div que muestra las ocurrencias
+const auto = document.querySelector('#results');
+
+let coords = {
+    lon:undefined,
+    lat:undefined,
+}
+
+/**
+ * Trae la lista de ciudades que coinciden con el nombre escrito en el input
+ */
+ciudadInput.addEventListener('keyup',async function(){
+    coords = {
+        lon:undefined,
+        lat:undefined,
+    }
+    auto.innerHTML = '';
+    let val = this.value;
+    if(val.length != 0){
+        auto.innerHTML = '';
+        let cities = `http://api.openweathermap.org/geo/1.0/direct?q=${val}&limit=5&appid=${api_key}&lang=sp`;
+        let list = await fetch(cities);
+        let a = await list.json();
+        a.forEach(element => {
+            const div = document.createElement("div");
+            div.setAttribute('class','element-list');
+            div.textContent = `${element.name + ', ' + (element.state == undefined ? '' : element.state + ', ') +  element.country}`;
+            div.addEventListener('click',function(){
+                setCoords([element.lon,element.lat]);
+                ciudadInput.value = div.innerHTML;
+            });
+            auto.appendChild(div);
+        });
+    }
+
+});
+/**
+ * Actualiza las coords para buscar info del tiempo
+ * @param {array} array
+ */
+function setCoords(array){
+coords.lon = array[0];
+coords.lat = array[1];
+}
 
 //buscar información del tiempo
 formulario.addEventListener('submit',async event => {
     event.preventDefault();//<- prevenir la recarga de la página al hacer un submit
     const ciudad = ciudadInput.value;
-    const codPais = countryCode.value;
     if(ciudad){
         try {
             const infoTiempo = await getInfoTiempo(ciudad);
@@ -27,34 +78,41 @@ formulario.addEventListener('submit',async event => {
         } catch (error) {
             //mostrar el error
             console.error(error);
-            mostrarError(error);
+            mostrarError(document.querySelector('#mensaje_error'),error);
         }
     }
-    else{mostrarError('Introduce el nombre de una ciudad');}
+    else{mostrarError(document.querySelector('#mensaje_error'),'Introduce el nombre de una ciudad');}
 });
 
 //Buscar información de lo que busca el usuario
-async function getInfoTiempo(ciudad){
+async function getInfoTiempo(poblacion){
     /*
     Parámetros adicionales:
     units='valor' <- para cambiar las medias
     lang='código idioma' <- para recibirlo en idioma a elegir
     */
-   const weather = `http://api.openweathermap.org/geo/1.0/direct?q=${ciudad}&limit=5&appid=${api_key}`;//pillar la lista del autocomplete
-   const response = await fetch(weather);
-   return await response.json();
-    // const current = `https://api.openweathermap.org/data/2.5/weather?q=${poblacion}${codPais.trim() === 0 ? '': ',' + codPais}&appid=${api_key}&units=metric&lang=sp `;
-    // const forecast = `https://api.openweathermap.org/data/2.5/forecast?q=${poblacion}${codPais.trim() === 0 ? '': ',' + codPais}&appid=${api_key}&units=metric&lang=sp `;//previsión a 5 días
+    const current = coords.lat == undefined || coords.lon == undefined
+    ? `https://api.openweathermap.org/data/2.5/weather?q=${poblacion}&appid=${api_key}&units=metric&lang=sp `
+    :
+    `https://api.openweathermap.org/data/2.5/weather?lat=${coords.lat}&lon=${coords.lon}&appid=${api_key}&units=metric&lang=sp`
+    ;
 
-    // const responseCurrent = await fetch(current);
-    // const responseForecast = await fetch(forecast);
+    const forecast = coords.lat == undefined || coords.lon == undefined
+    ?
+    `https://api.openweathermap.org/data/2.5/forecast?q=${poblacion}&appid=${api_key}&units=metric&lang=sp `
+    :
+    `https://api.openweathermap.org/data/2.5/forecast?lat=${coords.lat}&lon=${coords.lon}&appid=${api_key}&units=metric&lang=sp `
+    ;//previsión a 5 días
 
-    // //Si ocurre algún error al escribir el nombre de la ciudad o no la encuentra
-    // if(!responseCurrent.ok || !responseForecast.ok){
-    //     throw new Error('No se ha podido recibir información del tiempo');
-    // }
+    const responseCurrent = await fetch(current);
+    const responseForecast = await fetch(forecast);
 
-    // return {'current': await responseCurrent.json(),'forecast': await responseForecast.json()};
+    //Si ocurre algún error al escribir el nombre de la ciudad o no la encuentra
+    if(!responseCurrent.ok || !responseForecast.ok){
+        throw new Error('No se ha podido recibir información del tiempo');
+    }
+
+    return {'current': await responseCurrent.json(),'forecast': await responseForecast.json()};
 }
 
 /**
@@ -62,39 +120,36 @@ async function getInfoTiempo(ciudad){
  * @param {object} informacion
  */
 function mostrarInfoTiempo(informacion){
-    const map1 = informacion.map((x) => {return {name:x.name,country:x.country, state:x.state == undefined ? '' : x.state,lat:x.lat,lon:x.lon}});
-    console.log(map1);
+    console.log(informacion.current);
+    table.classList.contains('hidden') ? table.classList.toggle('hidden') : '';
+    document.querySelector('#mensaje_error').innerHTML = '';
+    const{
+        name:city,
+        main:{temp,feels_like,humidity},
+        weather:[{id,description,icon}],
+        clouds:{all},
+    } = informacion.current;
 
-    // console.log(informacion.current);
-    // table.classList.contains('hidden') ? table.classList.toggle('hidden') : '';
-    // document.querySelector('#mensaje_error').innerHTML = '';
-    // const{
-    //     name:city,
-    //     main:{temp,feels_like,humidity},
-    //     weather:[{id,description,icon}],
-    //     clouds:{all},
-    // } = informacion.current;
+    if(current.classList.contains('hidden')){
+        current.classList.toggle('hidden');
+        current.classList.toggle('show');
+    }
 
-    // if(current.classList.contains('hidden')){
-    //     current.classList.toggle('hidden');
-    //     current.classList.toggle('show');
-    // }
+    document.querySelector('#city').textContent = city; //display del nombre de la Ciudad
+    document.querySelector('#temp').textContent = `${temp}ºC`; //display de la temperatura
+    document.querySelector('#feels_like').textContent = `${feels_like}ºC`; //display de la sensación térmica
+    document.querySelector('#humidity').textContent = `${humidity}%`; //display del porcentaje de humedad
+    document.querySelector('#description').textContent = description[0].toUpperCase() + description.slice(1).toLowerCase();//descripción del tiempo
+    document.querySelector('#clouds').textContent = `${all}%`;//porcentaje de nubes
+    document.querySelector('#rain').textContent = `${informacion.current.rain == undefined ? '0.0' : informacion.current.rain['1h']}mm`;
+    document.querySelector('#icono').setAttribute('src', `https://openweathermap.org/img/wn/${icon}@2x.png`); //icono del tiempo
 
-    // document.querySelector('#city').textContent = city; //display del nombre de la Ciudad
-    // document.querySelector('#temp').textContent = `${temp}ºC`; //display de la temperatura
-    // document.querySelector('#feels_like').textContent = `${feels_like}ºC`; //display de la sensación térmica
-    // document.querySelector('#humidity').textContent = `${humidity}%`; //display del porcentaje de humedad
-    // document.querySelector('#description').textContent = description[0].toUpperCase() + description.slice(1).toLowerCase();//descripción del tiempo
-    // document.querySelector('#clouds').textContent = `${all}%`;//porcentaje de nubes
-    // document.querySelector('#rain').textContent = `${informacion.current.rain == undefined ? '0.0' : informacion.current.rain['1h']}mm`;
-    // document.querySelector('#icono').setAttribute('src', `https://openweathermap.org/img/wn/${icon}@2x.png`); //icono del tiempo
+    if(screen.classList.contains('neutral')){
+        screen.classList.toggle('neutral');
+    }
+    changeScreen(icon);
 
-    // if(screen.classList.contains('neutral')){
-    //     screen.classList.toggle('neutral');
-    // }
-    // changeScreen(icon);
-
-    // mostrarPrevision(informacion.forecast.list); //Mostrar la previsión a 5 días
+    mostrarPrevision(informacion.forecast.list); //Mostrar la previsión a 5 días
 }
 
 /**
@@ -229,32 +284,13 @@ function showModal(e){
 
 }
 
-/**
- * Rellena la ventana modal de los valores a mostrar con sus respectivos valores e iconos
- *
- *
- * @param {array} data - array de objetos con estructura de: prop,value,icon
- * @param {string} cssClass - clase css del wrapper
- * @param {string} target - elemento DOM objetivo
- */
-function loadContentInModal(data,cssClass,target){
-const domTarget = document.querySelector(target);
-domTarget.innerHTML = '';
-data.forEach(element => {
-    domTarget.innerHTML += `
-    <li class="${cssClass}">
-    <p>${element.icon} ${element.prop}</p>
-    <p>${element.value}</p>
-    </li>
-    `;
-});
-
+//Mostrar error
+function mostrarError(target,text){
+    clearScreen();
+    target.innerHTML = text
 }
 
-
-//Mostrar error
-function mostrarError(texto){
-
+function clearScreen(){
     prevTableBody.innerHTML = '';
     if(nodata.classList.contains('hidden')){
         nodata.classList.toggle('hidden');
@@ -268,5 +304,4 @@ function mostrarError(texto){
         current.classList.toggle('hidden');
         current.classList.remove('show');
     }
-    document.querySelector('#mensaje_error').innerHTML = texto
 }

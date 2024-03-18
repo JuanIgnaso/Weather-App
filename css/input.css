@@ -40,6 +40,10 @@
       @apply text-gray-400 gap-2 flex items-baseline;
     }
 
+    .element-list{
+      @apply bg-neutral-800/50 text-center p-2 hover:bg-neutral-900/75;
+    }
+
   }
 
 

@@ -7,7 +7,6 @@
 
     <link rel="stylesheet" href="/css/fontawesome/css/all.css">
 
-
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
 
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined"
@@ -47,11 +46,13 @@
     <section class="aspect-square md:aspect-video neutral relative" id="weather-screen">
 
         <form autocomplete="off" id="formularioTiempo" action="" class="absolute z-20 md:rounded-full bg-neutral-800/50 mt-2 p-1 flex flex-col md:flex-row justify-center items-center gap-3 text-white left-1/2 translate-x-[-50%] w-[90%]">
-            <input class="input-field" type="text" name="ciudadInput" id="countryCode" placeholder="Código país...">
+            <!-- Información -->
+            <i class="fa-solid fa-circle-info text-white text-2xl"></i>
 
             <!-- Autocomplete -->
             <div class="relative inline-block">
                 <input class="input-field" type="text" name="ciudadInput" id="ciudadInput" placeholder="Escribe una ciudad...">
+                <div class="absolute w-full top-14" id="results"></div>
             </div>
 
             <button class="p-2 hover:bg-neutral-800/75 focus:bg-neutral-800/75 outline-none border-none rounded-full" type="submit">Mostrar tiempo</button>
