@@ -47,7 +47,19 @@
 
         <form autocomplete="off" id="formularioTiempo" action="" class="absolute z-20 md:rounded-full bg-neutral-800/50 mt-2 p-1 flex flex-col md:flex-row justify-center items-center gap-3 text-white left-1/2 translate-x-[-50%] w-[90%]">
             <!-- Información -->
-            <i class="fa-solid fa-circle-info text-white text-2xl"></i>
+
+            <i class="fa-solid fa-circle-info text-white text-2xl hover:cursor-help peer"></i>
+
+            <!-- INFO -->
+            <div class="absolute p-3 top-1/2 bg-neutral-900/75 aspect-video w-[90%] md:w-1/2 lg:w-1/3 rounded-lg hidden peer-hover:block text-white z-[90]">
+                <p class="font-bold text-3xl mb-2">Modo de uso</p>
+                <ol class="space-y-4 self-center">
+                    <li>Escribe el nombre de la ciudad que desees</li>
+                    <li>Se te mostrarán unas sugerencias las cuales pueden mostrar el tiempo de una ubicación más exacta.</li>
+                    <li>Las sujerencias pueden ayudar a evitar ambiguedades.</li>
+                    <li>Si buscas el tiempo sin seleccionar una de las sujerencias, se mostrará el tiempo de la primera ocurrencia.</li>
+                </ol>
+            </div>
 
             <!-- Autocomplete -->
             <div class="relative inline-block">

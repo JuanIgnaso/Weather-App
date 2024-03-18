@@ -1,10 +1,10 @@
-//API KEY - b36342eefc788b8e4ccb10ae5c94bcd3
-//ISO country codes - https://www.iso.org/obp/ui/#search
-
-
+/*IMPORTS DE JS EXTERNOS*/
 import { getDayOfWeek , getMonthOfYear } from "./Dates.js";
 import { loadContentInModal } from "./modalContent.js";
+/*-----------------------*/
 
+
+/*VARIABLES A UTILIZAR*/
 //formulario donde se escribe para buscar
 const formulario = document.getElementById('formularioTiempo');
 
@@ -29,6 +29,10 @@ let coords = {
     lon:undefined,
     lat:undefined,
 }
+
+/*---------------------------------------------------------*/
+
+//FUNCIONES Y EVENTLISTENERS--------------------------------//
 
 /**
  * Trae la lista de ciudades que coinciden con el nombre escrito en el input
