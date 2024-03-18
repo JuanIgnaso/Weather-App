@@ -46,10 +46,14 @@
 
     <section class="aspect-square md:aspect-video neutral relative" id="weather-screen">
 
-        <form id="formularioTiempo" action="" class="absolute z-20 md:rounded-full bg-neutral-800/50 mt-2 p-1 flex flex-col md:flex-row justify-center items-center gap-3 text-white left-1/2 translate-x-[-50%] w-[90%]">
+        <form autocomplete="off" id="formularioTiempo" action="" class="absolute z-20 md:rounded-full bg-neutral-800/50 mt-2 p-1 flex flex-col md:flex-row justify-center items-center gap-3 text-white left-1/2 translate-x-[-50%] w-[90%]">
             <input class="input-field" type="text" name="ciudadInput" id="countryCode" placeholder="Código país...">
 
-            <input class="input-field" type="text" name="ciudadInput" id="ciudadInput" placeholder="Escribe una ciudad...">
+            <!-- Autocomplete -->
+            <div class="relative inline-block">
+                <input class="input-field" type="text" name="ciudadInput" id="ciudadInput" placeholder="Escribe una ciudad...">
+            </div>
+
             <button class="p-2 hover:bg-neutral-800/75 focus:bg-neutral-800/75 outline-none border-none rounded-full" type="submit">Mostrar tiempo</button>
         </form>
 
@@ -68,7 +72,7 @@
             <p id="description"></p>
             <img src="" id="icono" alt="icono de la descripción del tiempo" class="m-auto">
         </article>
-        <!-- ----------------------- -->
+        <!-- -------------------- -->
 
         <div  class="absolute left-1/2 top-1/2 translate-x-[-50%] translate-y-[-50%] text-red-600 font-bold text-xl">
             <p id="mensaje_error"></p>

@@ -22,7 +22,7 @@ formulario.addEventListener('submit',async event => {
     const codPais = countryCode.value;
     if(ciudad){
         try {
-            const infoTiempo = await getInfoTiempo(ciudad,codPais);
+            const infoTiempo = await getInfoTiempo(ciudad);
             mostrarInfoTiempo(infoTiempo);
         } catch (error) {
             //mostrar el error
@@ -34,24 +34,27 @@ formulario.addEventListener('submit',async event => {
 });
 
 //Buscar información de lo que busca el usuario
-async function getInfoTiempo(poblacion,codPais){
+async function getInfoTiempo(ciudad){
     /*
     Parámetros adicionales:
     units='valor' <- para cambiar las medias
     lang='código idioma' <- para recibirlo en idioma a elegir
     */
-    const current = `https://api.openweathermap.org/data/2.5/weather?q=${poblacion}${codPais.trim() === 0 ? '': ',' + codPais}&appid=${api_key}&units=metric&lang=sp `;
-    const forecast = `https://api.openweathermap.org/data/2.5/forecast?q=${poblacion}${codPais.trim() === 0 ? '': ',' + codPais}&appid=${api_key}&units=metric&lang=sp `;//previsión a 5 días
+   const weather = `http://api.openweathermap.org/geo/1.0/direct?q=${ciudad}&limit=5&appid=${api_key}`;//pillar la lista del autocomplete
+   const response = await fetch(weather);
+   return await response.json();
+    // const current = `https://api.openweathermap.org/data/2.5/weather?q=${poblacion}${codPais.trim() === 0 ? '': ',' + codPais}&appid=${api_key}&units=metric&lang=sp `;
+    // const forecast = `https://api.openweathermap.org/data/2.5/forecast?q=${poblacion}${codPais.trim() === 0 ? '': ',' + codPais}&appid=${api_key}&units=metric&lang=sp `;//previsión a 5 días
 
-    const responseCurrent = await fetch(current);
-    const responseForecast = await fetch(forecast);
+    // const responseCurrent = await fetch(current);
+    // const responseForecast = await fetch(forecast);
 
-    //Si ocurre algún error al escribir el nombre de la ciudad o no la encuentra
-    if(!responseCurrent.ok || !responseForecast.ok){
-        throw new Error('No se ha podido recibir información del tiempo');
-    }
+    // //Si ocurre algún error al escribir el nombre de la ciudad o no la encuentra
+    // if(!responseCurrent.ok || !responseForecast.ok){
+    //     throw new Error('No se ha podido recibir información del tiempo');
+    // }
 
-    return {'current': await responseCurrent.json(),'forecast': await responseForecast.json()};
+    // return {'current': await responseCurrent.json(),'forecast': await responseForecast.json()};
 }
 
 /**
@@ -59,36 +62,39 @@ async function getInfoTiempo(poblacion,codPais){
  * @param {object} informacion
  */
 function mostrarInfoTiempo(informacion){
-    console.log(informacion.current);
-    table.classList.contains('hidden') ? table.classList.toggle('hidden') : '';
-    document.querySelector('#mensaje_error').innerHTML = '';
-    const{
-        name:city,
-        main:{temp,feels_like,humidity},
-        weather:[{id,description,icon}],
-        clouds:{all},
-    } = informacion.current;
+    const map1 = informacion.map((x) => {return {name:x.name,country:x.country, state:x.state == undefined ? '' : x.state,lat:x.lat,lon:x.lon}});
+    console.log(map1);
 
-    if(current.classList.contains('hidden')){
-        current.classList.toggle('hidden');
-        current.classList.toggle('show');
-    }
+    // console.log(informacion.current);
+    // table.classList.contains('hidden') ? table.classList.toggle('hidden') : '';
+    // document.querySelector('#mensaje_error').innerHTML = '';
+    // const{
+    //     name:city,
+    //     main:{temp,feels_like,humidity},
+    //     weather:[{id,description,icon}],
+    //     clouds:{all},
+    // } = informacion.current;
 
-    document.querySelector('#city').textContent = city; //display del nombre de la Ciudad
-    document.querySelector('#temp').textContent = `${temp}ºC`; //display de la temperatura
-    document.querySelector('#feels_like').textContent = `${feels_like}ºC`; //display de la sensación térmica
-    document.querySelector('#humidity').textContent = `${humidity}%`; //display del porcentaje de humedad
-    document.querySelector('#description').textContent = description[0].toUpperCase() + description.slice(1).toLowerCase();//descripción del tiempo
-    document.querySelector('#clouds').textContent = `${all}%`;//porcentaje de nubes
-    document.querySelector('#rain').textContent = `${informacion.current.rain == undefined ? '0.0' : informacion.current.rain['1h']}mm`;
-    document.querySelector('#icono').setAttribute('src', `https://openweathermap.org/img/wn/${icon}@2x.png`); //icono del tiempo
+    // if(current.classList.contains('hidden')){
+    //     current.classList.toggle('hidden');
+    //     current.classList.toggle('show');
+    // }
 
-    if(screen.classList.contains('neutral')){
-        screen.classList.toggle('neutral');
-    }
-    changeScreen(icon);
+    // document.querySelector('#city').textContent = city; //display del nombre de la Ciudad
+    // document.querySelector('#temp').textContent = `${temp}ºC`; //display de la temperatura
+    // document.querySelector('#feels_like').textContent = `${feels_like}ºC`; //display de la sensación térmica
+    // document.querySelector('#humidity').textContent = `${humidity}%`; //display del porcentaje de humedad
+    // document.querySelector('#description').textContent = description[0].toUpperCase() + description.slice(1).toLowerCase();//descripción del tiempo
+    // document.querySelector('#clouds').textContent = `${all}%`;//porcentaje de nubes
+    // document.querySelector('#rain').textContent = `${informacion.current.rain == undefined ? '0.0' : informacion.current.rain['1h']}mm`;
+    // document.querySelector('#icono').setAttribute('src', `https://openweathermap.org/img/wn/${icon}@2x.png`); //icono del tiempo
 
-    mostrarPrevision(informacion.forecast.list); //Mostrar la previsión a 5 días
+    // if(screen.classList.contains('neutral')){
+    //     screen.classList.toggle('neutral');
+    // }
+    // changeScreen(icon);
+
+    // mostrarPrevision(informacion.forecast.list); //Mostrar la previsión a 5 días
 }
 
 /**
