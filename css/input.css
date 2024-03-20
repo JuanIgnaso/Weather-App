@@ -44,6 +44,10 @@
       @apply bg-neutral-800/50 text-center p-2 hover:bg-neutral-900/75;
     }
 
+    .fav-mark{
+      @apply after:content-['Marcar_como_favorito'] after:text-sm after:hidden hover:after:block after:absolute  after:md:whitespace-pre after:top-0 after:text-black;
+    }
+
   }
 
 

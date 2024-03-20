@@ -36,7 +36,7 @@ let coords = {
 //FUNCIONES Y EVENTLISTENERS--------------------------------//
 
 document.addEventListener('click',function(){
-    suggestions.classList.toggle('hidden');
+    !suggestions.classList.contains('hidden') ? suggestions.classList.toggle('hidden') : '';
 });
 
 /**
@@ -111,7 +111,7 @@ function mostrarInfoTiempo(informacion){
     }
 
     //VENTANA DONDE SE MUESTRA EL TIEMPO ACTUAL
-    document.querySelector('#city').innerHTML = `${city} ` + '<button class="hover:text-red-500"><i class="fa-solid fa-bookmark p-3 text-2xl"></i></button>'; //display del nombre de la Ciudad
+    document.querySelector('#city').innerHTML = `${city} ` + '<button class="hover:text-red-500 fav-mark"><i class="fa-solid fa-bookmark p-3 text-2xl"></i></button>'; //display del nombre de la Ciudad
     document.querySelector('#temp').textContent = `${temp}ºC`; //display de la temperatura
     document.querySelector('#feels_like').textContent = `${feels_like}ºC`; //display de la sensación térmica
     document.querySelector('#humidity').textContent = `${humidity}%`; //display del porcentaje de humedad
@@ -226,7 +226,6 @@ function showModal(e){
     ];
     //CONTENIDO DE LA MODAL
     loadContentInModal(data,'measure-wrapper','#weather-info');
-
 }
 
 
