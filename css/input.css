@@ -45,7 +45,11 @@
     }
 
     .fav-mark{
-      @apply after:content-['Marcar_como_favorito'] after:text-sm after:hidden hover:after:block after:absolute  after:md:whitespace-pre after:top-0 after:text-black;
+      @apply flex items-center after:content-['Marcar_como_favorito'] after:text-sm after:hidden hover:after:block after:absolute  after:md:whitespace-pre after:top-0 after:text-black after:font-bold;
+    }
+
+    .marked{
+      @apply text-red-500;
     }
 
   }

@@ -1,10 +1,7 @@
 
 
 export async function getCitiesOcurrences(sender,target,api_key,coords){
-    coords = {
-        lon:undefined,
-        lat:undefined,
-    }
+
     target.innerHTML = '';
     let val = sender.value;
     if(val.length != 0){
@@ -17,6 +14,8 @@ export async function getCitiesOcurrences(sender,target,api_key,coords){
             div.setAttribute('class','element-list');
             div.textContent = `${element.name + ', ' + (element.state == undefined ? '' : element.state + ', ') +  element.country}`;
             div.addEventListener('click',function(){
+                coords.lon = element.lon;
+                coords.lat = element.lat;
                 setCoords(coords,[element.lon,element.lat]);
                 sender.value = div.innerHTML;
             });

@@ -14,11 +14,10 @@
 
     <title>Weather App</title>
 </head>
-<body class="bg-neutral-800">
+<body class="bg-neutral-900">
 
-<header class="p-4">
-    <h1 class="flex pb-4 flex-col md:flex-row text-center items-center text-5xl font-extrabold dark:text-white">Weather App<small class="ms-2 font-semibold text-gray-500 dark:text-gray-400"> Aplicación de consulta del tiempo.</small><img src=" https://openweathermap.org/img/wn/02d@2x.png" alt=""></h1>
-    <h2 class="text-right">Aplicación hecha en TailWindCSS y API de <a href="https://openweathermap.org/">OpenWeatherMap</a></h2>
+<header class="pl-4 pt-4 pr-4">
+    <h1 class="flex pb-4 flex-col md:flex-row text-center items-center text-5xl font-extrabold dark:text-white">Weather App<small class="ms-2 font-semibold text-gray-500 dark:text-gray-400"> Aplicación de consulta del tiempo.</small><img src=" https://openweathermap.org/img/wn/02d@2x.png" alt="icono tiempo" aria-hidden="true"></h1>
 </header>
 
 
@@ -43,8 +42,9 @@
 </div>
 
 <main class="w-full h-full">
+    <h2 class="bg-neutral-800 p-2 text-center md:text-right font-semibold text-gray-500 dark:text-gray-400 text-base">Aplicación hecha en TailWindCSS y API de <a href="https://openweathermap.org/" target="_blank" class="text-lightOrange text-xl font-extrabold after:content-['_↗']">OpenWeatherMap</a></h2>
 
-    <section class="aspect-square md:aspect-video neutral relative" id="weather-screen">
+    <section class="aspect-1/2 sm:aspect-square md:aspect-video neutral relative" id="weather-screen">
 
         <form autocomplete="off" id="formularioTiempo" action="" class="absolute z-20 md:rounded-full bg-neutral-800/50 mt-2 p-1 flex flex-col md:flex-row justify-center items-center gap-3 text-white left-1/2 translate-x-[-50%] w-[90%]">
             <!-- Información -->
@@ -67,15 +67,21 @@
                 <input class="input-field" type="text" name="ciudadInput" id="ciudadInput" placeholder="Escribe una ciudad...">
                 <div class="absolute w-full top-14" id="results"></div>
             </div>
-
             <button class="p-2 hover:bg-neutral-800/75 focus:bg-neutral-800/75 outline-none border-none rounded-full" type="submit">Mostrar tiempo</button>
+            <div class="md:absolute md:right-0 md:mr-4">
+                <span class="material-symbols-outlined bg-neutral-800/75 rounded-full p-2">bookmark</span>
+            </div>
+
         </form>
 
 
 
         <!-- TIEMPO ACTUAL ------------>
         <article class="absolute left-1/2 top-1/2 translate-x-[-50%] translate-y-[-50%] hidden" id="current">
-            <h2 class="text-5xl" id="city"></h2>
+
+            <div class="flex items-center justify-center">
+                <h2 class="text-5xl" id="city"></h2><button class="hover:text-red-500 fav-mark" id="mark-favorite"><i class="fa-solid fa-bookmark p-3 text-2xl"></i></button>
+            </div>
             <p class="text-3xl" id="temp"></p>
             <p>Sensación Térmica <span id="feels_like" class="font-bold"></span></p>
             <p><span id="humidity" class="font-bold"></span> de Humedad</p>
@@ -85,6 +91,7 @@
             </div>
             <p id="description"></p>
             <img src="" id="icono" alt="icono de la descripción del tiempo" class="m-auto">
+            <p class="hidden" id="coords">coordenadas</p>
         </article>
         <!-- -------------------- -->
 
@@ -133,23 +140,22 @@
 
 <script src="./js/index.js" type="module"></script>
     <!-- FOOTER -->
-    <footer class="text-center p-4">
+    <footer class="text-center pl-4 pt-4 pr-4 pb-2">
         <div class="border-2 border-white m-auto w-3/4 lg:w-1/2 mt-8 mb-8"></div>
-        <ol class="flex flex-col items-center space-y-2 text-white">
-            <li>
-                <h3 class="text-4xl font-extrabold dark:text-white">Weather App</h3>
-            </li>
-            <li><span>Contactos</span></li>
-            <li>
-                <ol class="flex space-x-4">
-                    <li class="footer-info">GitHub <a class="text-orange-400"
+            <section class="flex flex-col md:flex-row justify-center gap-8">
+                <p class="text-4xl font-extrabold dark:text-white">Weather App</p>
+
+                <ol class="flex flex-col items-center md:items-start gap-2">
+                    <li><p class="text-2xl font-extrabold dark:text-white border-b-2 border-white/50">Contactos</p></li>
+                    <li class="footer-info">GitHub <a class="text-lightOrange hover:text-orange-400"
                             href="https://github.com/JuanIgnaso"><i class="fa-brands fa-github"></i></a></li>
-                    <li class="footer-info">Linkedin <a class="text-orange-400"
+                    <li class="footer-info">Linkedin <a class="text-lightOrange hover:text-orange-400"
                             href="https://www.linkedin.com/in/juan-ignacio-navarrete-soli%C3%B1o-935308282/"><i
                                 class="fa-brands fa-linkedin"></i></a></li>
                 </ol>
-            </li>
-        </ol>
+            </section>
+            <span class="mt-2 block text-sm text-center text-gray-500 sm:text-right dark:text-gray-400">© 2024 <strong class="hover:underline">Juan Navarrete</strong></span>
+
     </footer>
 </body>
 </html>

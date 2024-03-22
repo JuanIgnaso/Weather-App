@@ -4,32 +4,56 @@ import { loadContentInModal } from "./modalContent.js";
 import { getCitiesOcurrences } from "./getCitiesList.js";
 /*-----------------------*/
 
-
 /*VARIABLES A UTILIZAR*/
-//formulario donde se escribe para buscar
 const appForm = document.getElementById('formularioTiempo');
 
 //input donde se escribe la búsqueda
 const cityInput = document.querySelector('#ciudadInput');
-
-//llave de la API
 const api_key = 'b36342eefc788b8e4ccb10ae5c94bcd3';
 
 //Pantalla donde se muestra el tiempo
 let screen = document.querySelector('#weather-screen');
-
-//Tabla donde se muestran las previsiones del tiempo a 5 días
 const forecastTableBody = document.querySelector('#tableBody');
 const forecastTable = document.querySelector('#tableContent');
 const nodata = document.querySelector('#no-data');
+let currentCoords = document.querySelector('#coords');
 
 //div que muestra las ocurrencias
 const suggestions = document.querySelector('#results');
 
+
 let coords = {
     lon:undefined,
     lat:undefined,
-}
+};
+
+//LocalStorage
+const favStorage = window.localStorage;
+
+//Favoritos
+let favorites = [];
+
+//Botón de marcar favorito
+const favButton = document.querySelector('#mark-favorite');
+
+window.addEventListener('load',function(){
+    if(favStorage.getItem('favorites') != null){
+       favorites = JSON.parse(favStorage.getItem('favorites'));
+    }
+    console.log(favorites);
+});
+
+//Guardar en favs y actualizar localStorage
+favButton.addEventListener('click',function(){
+    let value = currentCoords.innerHTML.split(',');
+    let obj = {lon:Number(value[0]),lat:Number(value[1])};
+    if(favorites.find((element) => element.lon == obj.lon && element.lat == obj.lat) == undefined){
+        favorites.push({lon:Number(value[0]),lat:Number(value[1])});
+    }
+    favStorage.setItem('favorites',JSON.stringify(favorites));
+});
+
+
 
 /*---------------------------------------------------------*/
 
@@ -45,6 +69,7 @@ document.addEventListener('click',function(){
 cityInput.addEventListener('keyup',async function(){
     suggestions.classList.contains('hidden') ? suggestions.classList.toggle('hidden') : '';
     try{
+
         getCitiesOcurrences(this,suggestions,api_key,coords);
     }catch(error){
         showError(document.querySelector('#mensaje_error'),error);
@@ -57,8 +82,9 @@ appForm.addEventListener('submit',async event => {
     const ciudad = cityInput.value;
     if(ciudad){
         try {
-            const infoTiempo = await getInfoTiempo(ciudad);
-            mostrarInfoTiempo(infoTiempo);
+            const infoTiempo = await getWeatherInfo(ciudad);
+            showCurrentWeather(infoTiempo);
+
         } catch (error) {
             //mostrar el error
             console.error(error);
@@ -68,8 +94,10 @@ appForm.addEventListener('submit',async event => {
     else{showError(document.querySelector('#mensaje_error'),'Introduce el nombre de una ciudad');}
 });
 
+
+
 //Buscar información de lo que busca el usuario
-async function getInfoTiempo(poblacion){
+async function getWeatherInfo(poblacion){
 
     /*Si lat o lon están definidos busca por coords, si no, busca por nombre que es menos preciso en la ubicación*/
     const current = coords.lat == undefined || coords.lon == undefined
@@ -85,12 +113,19 @@ async function getInfoTiempo(poblacion){
     `https://api.openweathermap.org/data/2.5/forecast?lat=${coords.lat}&lon=${coords.lon}&appid=${api_key}&units=metric&lang=sp `
     ;
 
+
+
     const responseCurrent = await fetch(current);
     const responseForecast = await fetch(forecast);
 
     if(!responseCurrent.ok || !responseForecast.ok){
         throw new Error('No se ha podido recibir información del tiempo');
     }
+
+    coords = {
+        lon:undefined,
+        lat:undefined,
+    };
 
     return {'current': await responseCurrent.json(),'forecast': await responseForecast.json()};
 }
@@ -99,7 +134,7 @@ async function getInfoTiempo(poblacion){
  * Muestra la información del tiempo en pantalla.
  * @param {object} informacion
  */
-function mostrarInfoTiempo(informacion){
+function showCurrentWeather(informacion){
     forecastTable.classList.contains('hidden') ? forecastTable.classList.toggle('hidden') : '';
     document.querySelector('#mensaje_error').innerHTML = '';
 
@@ -111,7 +146,7 @@ function mostrarInfoTiempo(informacion){
     }
 
     //VENTANA DONDE SE MUESTRA EL TIEMPO ACTUAL
-    document.querySelector('#city').innerHTML = `${city} ` + '<button class="hover:text-red-500 fav-mark"><i class="fa-solid fa-bookmark p-3 text-2xl"></i></button>'; //display del nombre de la Ciudad
+    document.querySelector('#city').innerHTML = `${city} `; //display del nombre de la Ciudad
     document.querySelector('#temp').textContent = `${temp}ºC`; //display de la temperatura
     document.querySelector('#feels_like').textContent = `${feels_like}ºC`; //display de la sensación térmica
     document.querySelector('#humidity').textContent = `${humidity}%`; //display del porcentaje de humedad
@@ -119,22 +154,22 @@ function mostrarInfoTiempo(informacion){
     document.querySelector('#clouds').textContent = `${all}%`;//porcentaje de nubes
     document.querySelector('#rain').textContent = `${informacion.current.rain == undefined ? '0.0' : informacion.current.rain['1h']}mm`;
     document.querySelector('#icono').setAttribute('src', `https://openweathermap.org/img/wn/${icon}@2x.png`); //icono del tiempo
+    document.querySelector('#coords').textContent = `${informacion.current.coord.lon},${informacion.current.coord.lat}`;
 
     if(screen.classList.contains('neutral')){
         screen.classList.toggle('neutral');
     }
     changeScreenAppearance(icon);
 
-    mostrarPrevision(informacion.forecast.list); //Mostrar la previsión a 5 días
+    showForecast(informacion.forecast.list); //Mostrar la previsión a 5 días
 }
 
 
 
-function mostrarPrevision(informacion){
+function showForecast(informacion){
     if(!nodata.classList.contains('hidden')){
         nodata.classList.toggle('hidden');
     }
-    console.log(informacion);
     forecastTableBody.innerHTML = '';
     let fecha = new Date();
     let dia = fecha.getDate();//dia actual
