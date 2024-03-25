@@ -56,6 +56,7 @@ favoritesBtn.addEventListener('click',function(){
                 favStorage.setItem('favorites',JSON.stringify(favorites));
                 this.parentNode.remove();
             });
+            li.addEventListener('click',function(){coords.lat = element.lat; coords.lon = element.lon; console.log(coords)});
             favoritesList.appendChild(li);
         });
     }
@@ -117,19 +118,17 @@ appForm.addEventListener('submit',async event => {
             console.error(error);
             showError(document.querySelector('#mensaje_error'),error);
         }
+
     }
     else{showError(document.querySelector('#mensaje_error'),'Introduce el nombre de una ciudad');}
 });
 
-async function searchWeatherInfo(event){
 
-}
 
 
 
 //Buscar información de lo que busca el usuario
 async function getWeatherInfo(poblacion){
-
     /*Si lat o lon están definidos busca por coords, si no, busca por nombre que es menos preciso en la ubicación*/
     const current = coords.lat == undefined || coords.lon == undefined
     ? `https://api.openweathermap.org/data/2.5/weather?q=${poblacion}&appid=${api_key}&units=metric&lang=sp `
