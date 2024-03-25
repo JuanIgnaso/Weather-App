@@ -67,13 +67,31 @@
                 <input class="input-field" type="text" name="ciudadInput" id="ciudadInput" placeholder="Escribe una ciudad...">
                 <div class="absolute w-full top-14" id="results"></div>
             </div>
-            <button class="p-2 hover:bg-neutral-800/75 focus:bg-neutral-800/75 outline-none border-none rounded-full" type="submit">Mostrar tiempo</button>
-            <div class="md:absolute md:right-0 md:mr-4">
-                <span class="material-symbols-outlined bg-neutral-800/75 rounded-full p-2">bookmark</span>
+            <button type="submit" class="relative inline-flex items-center justify-center p-0.5 overflow-hidden text-sm font-medium text-gray-900 rounded-full group bg-gradient-to-br from-purple-600 to-blue-500 group-hover:from-purple-600 group-hover:to-blue-500 hover:text-white dark:text-white dark:focus:ring-blue-800">
+                <span class="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-neutral-600 rounded-full group-hover:bg-opacity-0">
+                Mostrar Tiempo
+                </span>
+            </button>
+            <div class="md:absolute md:right-0 md:mr-1">
+
+                <button id="show-favorites" type="button"  class="relative inline-flex items-center justify-center p-0.5  overflow-hidden text-sm font-medium text-gray-900 rounded-full group bg-gradient-to-br from-purple-600 to-blue-500 group-hover:from-purple-600 group-hover:to-blue-500 hover:text-white dark:text-white  dark:focus:ring-blue-800">
+                    <span class="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-neutral-600 rounded-full group-hover:bg-opacity-0">
+                        Guardados
+                    </span>
+                    </button>
+                    <!-- Dropdown menu -->
+                    <div class="absolute z-10 hidden  rounded-lg shadow w-44 dark:bg-neutral-800/50 left-1/2 mt-2 translate-x-[-50%]">
+                        <ul id="fav-list" class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
+                        </ul>
+                    </div>
             </div>
-
         </form>
-
+<!-- <li class="fav-element-wrapper">
+                            <span>No se encuentran elementos</span>
+                        </li> -->
+                        <!-- <li class="fav-element-wrapper">
+                            <span>Condado Dos</span><span class="text-base hover:cursor-pointer">&times;</span>
+                        </li> -->
 
 
         <!-- TIEMPO ACTUAL ------------>
@@ -91,6 +109,7 @@
             </div>
             <p id="description"></p>
             <img src="" id="icono" alt="icono de la descripción del tiempo" class="m-auto">
+
             <p class="hidden" id="coords">coordenadas</p>
         </article>
         <!-- -------------------- -->

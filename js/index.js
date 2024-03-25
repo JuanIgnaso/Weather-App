@@ -2,6 +2,7 @@
 import { getDayOfWeek , getMonthOfYear } from "./Dates.js";
 import { loadContentInModal } from "./modalContent.js";
 import { getCitiesOcurrences } from "./getCitiesList.js";
+
 /*-----------------------*/
 
 /*VARIABLES A UTILIZAR*/
@@ -36,11 +37,36 @@ let favorites = [];
 //Botón de marcar favorito
 const favButton = document.querySelector('#mark-favorite');
 
+//Mostrar favoritos
+let favoritesBtn = document.querySelector('#show-favorites');
+let favoritesList = document.querySelector('#fav-list');
+
+favoritesBtn.addEventListener('click',function(){
+    favoritesList.parentNode.classList.toggle('hidden');
+    favoritesList.innerHTML = '';
+    if(favorites.length == 0){
+        favoritesList.innerHTML = '<li class="fav-element-wrapper"><span>No se encuentran elementos</span></li>';
+    }else{
+        favorites.forEach(element => {
+            let li = document.createElement('li');
+            li.setAttribute('class','fav-element-wrapper');
+            li.innerHTML= element.city + '<span class="text-base close hover:cursor-pointer">&times;</span>';
+            li.querySelector('.close').addEventListener('click',function(){
+                favorites = favorites.filter(function(e){return e !== element});
+                favStorage.setItem('favorites',JSON.stringify(favorites));
+                this.parentNode.remove();
+            });
+            favoritesList.appendChild(li);
+        });
+    }
+});
+
+
+
 window.addEventListener('load',function(){
     if(favStorage.getItem('favorites') != null){
        favorites = JSON.parse(favStorage.getItem('favorites'));
     }
-    console.log(favorites);
 });
 
 //Guardar en favs y actualizar localStorage
@@ -48,9 +74,10 @@ favButton.addEventListener('click',function(){
     let value = currentCoords.innerHTML.split(',');
     let obj = {lon:Number(value[0]),lat:Number(value[1])};
     if(favorites.find((element) => element.lon == obj.lon && element.lat == obj.lat) == undefined){
-        favorites.push({lon:Number(value[0]),lat:Number(value[1])});
+        favorites.push({city:document.querySelector('#city').innerHTML,lon:Number(value[0]),lat:Number(value[1])});
     }
     favStorage.setItem('favorites',JSON.stringify(favorites));
+    console.log(favorites);
 });
 
 
@@ -93,6 +120,10 @@ appForm.addEventListener('submit',async event => {
     }
     else{showError(document.querySelector('#mensaje_error'),'Introduce el nombre de una ciudad');}
 });
+
+async function searchWeatherInfo(event){
+
+}
 
 
 
@@ -146,7 +177,7 @@ function showCurrentWeather(informacion){
     }
 
     //VENTANA DONDE SE MUESTRA EL TIEMPO ACTUAL
-    document.querySelector('#city').innerHTML = `${city} `; //display del nombre de la Ciudad
+    document.querySelector('#city').innerHTML = `${city}`; //display del nombre de la Ciudad
     document.querySelector('#temp').textContent = `${temp}ºC`; //display de la temperatura
     document.querySelector('#feels_like').textContent = `${feels_like}ºC`; //display de la sensación térmica
     document.querySelector('#humidity').textContent = `${humidity}%`; //display del porcentaje de humedad
