@@ -165,6 +165,12 @@ async function getWeatherInfo(poblacion){
  * @param {object} informacion
  */
 function showCurrentWeather(informacion){
+    if(favorites.find((element) => element.lon == informacion.current.coord.lon && element.lat == informacion.current.coord.lat) != undefined){
+        favButton.classList.toggle('marked');
+    }else{
+        favButton.classList.remove('marked');
+    }
+
     forecastTable.classList.contains('hidden') ? forecastTable.classList.toggle('hidden') : '';
     document.querySelector('#mensaje_error').innerHTML = '';
 

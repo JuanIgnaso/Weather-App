@@ -41,11 +41,11 @@
     }
 
     .element-list{
-      @apply bg-neutral-800/50 text-center p-2 hover:bg-neutral-900/75;
+      @apply bg-neutral-800/50 text-center p-2 hover:bg-neutral-900/75 hover:font-extrabold first:rounded-t-lg last:rounded-b-lg;
     }
 
     .fav-mark{
-      @apply flex items-center after:content-['Guardar_ubicación'] after:text-sm after:hidden hover:after:block after:absolute  after:md:whitespace-pre after:top-0 after:text-black after:font-bold;
+      @apply flex items-center hover:text-red-500 ;
     }
 
     .marked{
@@ -53,7 +53,7 @@
     }
 
     .fav-element-wrapper{
-      @apply px-4 py-2 hover:bg-neutral-800/75  dark:hover:text-white flex justify-between;
+      @apply px-4 py-2 hover:bg-neutral-800/75  dark:hover:text-white flex justify-between hover:font-extrabold;
     }
 
   }

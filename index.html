@@ -7,6 +7,7 @@
 
     <link rel="stylesheet" href="/css/fontawesome/css/all.css">
 
+    <!-- GOOGLE MATERIAL SYMBOLS & ICONS -->
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
 
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined"
@@ -16,8 +17,9 @@
 </head>
 <body class="bg-neutral-900">
 
+    <!-- HEADER DE LA PÁGINA -->
 <header class="pl-4 pt-4 pr-4">
-    <h1 class="flex pb-4 flex-col md:flex-row text-center items-center text-5xl font-extrabold dark:text-white">Weather App<small class="ms-2 font-semibold text-gray-500 dark:text-gray-400"> Aplicación de consulta del tiempo.</small><img src=" https://openweathermap.org/img/wn/02d@2x.png" alt="icono tiempo" aria-hidden="true"></h1>
+    <h1 class="flex pb-4 gap-3 flex-col md:flex-row text-center items-center text-5xl font-extrabold dark:text-white">Weather App<span class="text-lightOrange font-bold">-</span><small class="font-semibold text-gray-500 dark:text-gray-400"> Aplicación de consulta del tiempo.</small><img src=" https://openweathermap.org/img/wn/02d@2x.png" alt="icono tiempo" aria-hidden="true"></h1>
 </header>
 
 
@@ -46,11 +48,11 @@
 
     <section class="aspect-1/2 sm:aspect-square md:aspect-video neutral relative" id="weather-screen">
 
-        <form autocomplete="off" id="formularioTiempo" action="" class="absolute z-20 md:rounded-full bg-neutral-800/50 mt-2 p-1 flex flex-col md:flex-row justify-center items-center gap-3 text-white left-1/2 translate-x-[-50%] w-[90%]">
+        <form autocomplete="off" id="formularioTiempo" action="" class="absolute z-20 rounded-mf md:rounded-full bg-neutral-800/50 mt-2 p-2 md:p-1 flex flex-col md:flex-row justify-center items-center gap-3 text-white left-1/2 translate-x-[-50%] w-[90%]">
             <!-- Información -->
             <button type="button" class="hover:cursor-help peer relative inline-flex items-center justify-center p-0.5 overflow-hidden text-sm font-medium text-gray-900 rounded-full group bg-gradient-to-br from-pink-500 to-orange-400 group-hover:from-pink-500 group-hover:to-orange-400 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-pink-200 dark:focus:ring-pink-800">
-                <span class="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-neutral-600 rounded-full group-hover:bg-opacity-0">
-                    <i class="fa-solid fa-info"></i>
+                <span class="relative px-5 py-2.5 transition-all ease-in duration-75 text-white dark:bg-neutral-600 rounded-full group-hover:bg-opacity-0 font-extrabold">
+                    i
                 </span>
             </button>
 
@@ -65,43 +67,46 @@
                 </ol>
             </div>
 
-            <!-- Autocomplete -->
-            <div class="relative inline-block">
-                <input class="input-field" type="text" name="ciudadInput" id="ciudadInput" placeholder="Escribe una ciudad...">
-                <div class="absolute w-full top-14" id="results"></div>
+            <!-- INPUT DEL USUARIO -->
+            <div class="flex bg-gradient-to-br from-purple-600 to-blue-500 group-hover:from-purple-600 group-hover:to-blue-500 rounded-full">
+                <div class="relative w-full p-0.5">
+                    <input type="search" id="ciudadInput" class="rounded-full block p-2.5 w-full z-20 text-sm text-gray-900 bg-neutral-600 transition-all ease-in duration-75 border-s-gray-50 border-s-2 border border-gray-300 focus:bg-neutral-800 focus:ring-blue-500 focus:border-blue-500  dark:border-none dark:placeholder-white/50 dark:text-white dark:focus:border-blue-500" name="ciudadInput" id="ciudadInput" placeholder="Escribe una ciudad..." />
+                    <button type="submit" class="absolute rounded-r-full top-0 end-0 p-2.5 text-sm font-medium h-full text-white  rounded-e-lg border bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 border-none">
+                        <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
+                        </svg>
+                        <span class="sr-only">Search</span>
+                    </button>
+                    <!-- AUTOCOMPLETE -->
+                    <div class="absolute w-full top-14 rounded-full" id="results"></div>
+                </div>
             </div>
-            <button type="submit" class="relative inline-flex items-center justify-center p-0.5 overflow-hidden text-sm font-medium text-gray-900 rounded-full group bg-gradient-to-br from-purple-600 to-blue-500 group-hover:from-purple-600 group-hover:to-blue-500 hover:text-white dark:text-white dark:focus:ring-blue-800">
-                <span class="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-neutral-600 rounded-full group-hover:bg-opacity-0">
-                Mostrar Tiempo
-                </span>
-            </button>
+
             <div class="md:absolute md:right-0 md:mr-1">
 
                 <button id="show-favorites" type="button"  class="relative inline-flex items-center justify-center p-0.5  overflow-hidden text-sm font-medium text-gray-900 rounded-full group bg-gradient-to-br from-purple-600 to-blue-500 group-hover:from-purple-600 group-hover:to-blue-500 hover:text-white dark:text-white  dark:focus:ring-blue-800">
-                    <span class="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-neutral-600 rounded-full group-hover:bg-opacity-0">
+                    <span class="relative px-5 py-2.5 transition-all ease-in duration-75 text-white dark:bg-neutral-600 rounded-full group-hover:bg-opacity-0">
                         Guardados
                     </span>
                     </button>
                     <!-- Dropdown menu -->
-                    <div class="absolute z-10 hidden  rounded-lg shadow w-44 dark:bg-neutral-800/50 left-1/2 mt-2 translate-x-[-50%]">
-                        <ul id="fav-list" class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
+                    <div class="absolute z-10 hidden  rounded-lg shadow w-44 dark:bg-neutral-950/50 left-1/2 mt-2 translate-x-[-50%]">
+                        <ul id="fav-list" class="py-2 text-sm text-white" aria-labelledby="dropdownDefaultButton">
                         </ul>
                     </div>
             </div>
         </form>
-<!-- <li class="fav-element-wrapper">
-                            <span>No se encuentran elementos</span>
-                        </li> -->
-                        <!-- <li class="fav-element-wrapper">
-                            <span>Condado Dos</span><span class="text-base hover:cursor-pointer">&times;</span>
-                        </li> -->
-
+        <!-- ------------------------------------- -->
 
         <!-- TIEMPO ACTUAL ------------>
         <article class="absolute left-1/2 top-1/2 translate-x-[-50%] translate-y-[-50%] hidden" id="current">
 
             <div class="flex items-center justify-center">
-                <h2 class="text-5xl" id="city"></h2><button class="hover:text-red-500 fav-mark" id="mark-favorite"><i class="fa-solid fa-bookmark p-3 text-2xl"></i></button>
+                <h2 class="text-5xl" id="city"></h2>
+                <div class="relative">
+                    <button class="peer fav-mark" id="mark-favorite"><i class="fa-solid fa-bookmark p-3 text-2xl"></i></button>
+                    <span class="peer-hover:block hidden absolute bottom-full left-1/2 translate-x-[-50%] text-center whitespace-pre text-white bg-neutral-800/50 font-bold p-1.5 rounded-full">Guardar ubicación</span>
+                </div>
             </div>
             <p class="text-3xl" id="temp"></p>
             <p>Sensación Térmica <span id="feels_like" class="font-bold"></span></p>
@@ -126,6 +131,8 @@
 
                     <div class="bg-neutral-800/50 rounded-lg mt-2 gap-2 p-3 hidden" id="content">
                         <p class="text-red-600 text-center font-bold" id="no-data">Sin datos</p>
+
+                        <!-- TABLA DE PREVISIÓN DEL TIEMPO -->
                         <table class="table-fixed w-full text-xs md:text-sm lg:text-base hidden" id="tableContent">
                             <thead>
                               <tr>
@@ -155,14 +162,14 @@
         </footer>
 
     </section>
-
-
 </main>
 
 
 <script src="./js/index.js" type="module"></script>
     <!-- FOOTER -->
+
     <footer class="text-center pl-4 pt-4 pr-4 pb-2">
+
         <div class="border-2 border-white m-auto w-3/4 lg:w-1/2 mt-8 mb-8"></div>
             <section class="flex flex-col md:flex-row justify-center gap-8">
                 <p class="text-4xl font-extrabold dark:text-white">Weather App</p>
@@ -177,7 +184,6 @@
                 </ol>
             </section>
             <span class="mt-2 block text-sm text-center text-gray-500 sm:text-right dark:text-gray-400">© 2024 <strong class="hover:underline">Juan Navarrete</strong></span>
-
     </footer>
 </body>
 </html>
