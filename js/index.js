@@ -13,7 +13,7 @@ import { getCitiesOcurrences } from "./getCitiesList.js";
 import { getStartingPoint } from "./getStartPoint.js";
 import { toggleClass,dissableClass } from "./toggleDissableClass.js";
 import { modalData } from "./modalData.js";
-
+import { changeScreenAppearance } from "./changeDayGradiant.js";
 
 /*VARIABLES A UTILIZAR-------------------------------------------------------*/
 const appForm = document.getElementById('formularioTiempo');
@@ -49,7 +49,6 @@ let favoritesBtn = document.querySelector('#show-favorites');
 let favoritesList = document.querySelector('#fav-list');
 
 /*-FUNCIONES DEL SCRIPT -------------------------------------------------------------------------------*/
-
 /**
  * Busca la información del tiempo en base al estado de las coordenadas o el nombre de ciudad introducido por el usuario y devuelve un objeto con el tiempo actual y predicción a 5 días.
  * @param {string} poblacion
@@ -162,20 +161,6 @@ function showForecast(informacion){
 
 
 /**
- * Cambia el gradiante de la pantalla en función de si el icono contiene 'n'(night) o 'd'(day).
- * @param {string} icon
- */
-function changeScreenAppearance(icon){
-    if(icon.indexOf('n') != -1){
-        dissableClass('day',screen);
-        toggleClass('night',screen);
-    }else{
-        dissableClass('night',screen);
-        toggleClass('day',screen);
-    }
-}
-
-/**
  * Muestra la modal con los datos del tiempo que contiene el objeto pasado como
  * parámetro.
  * @param {object} e
@@ -218,7 +203,7 @@ function clearScreenContent(){
 }
 
 
-//EVENTLISTENERS-------------------------------------------//
+//EVENTLISTENERS---------------------------------------------------------------------------------------------//
 
 //Realizar petición a API y traer lista de ocurrencias
 cityInput.addEventListener('keyup',async function(){
@@ -238,6 +223,7 @@ appForm.addEventListener('submit',async event => {
         try {
             const infoTiempo = await getWeatherInfo(ciudad);
             showCurrentWeather(infoTiempo);
+            console.log(coords);
         } catch (error) {
             //mostrar el error
             showError(document.querySelector('#mensaje_error'),error);
@@ -269,7 +255,6 @@ favoritesBtn.addEventListener('click',function(){
     }
 });
 
-
 //Cargar ubicaciones guardadas en LocalStorage
 window.addEventListener('load',function(){
     if(favStorage.getItem('favorites') != null){
@@ -281,14 +266,27 @@ window.addEventListener('load',function(){
 favButton.addEventListener('click',function(){
     let value = currentCoords.innerHTML.split(',');
     let obj = {lon:Number(value[0]),lat:Number(value[1])};
-    if(favorites.find((element) => element.lon == obj.lon && element.lat == obj.lat) == undefined){
-        favorites.push({city:document.querySelector('#city').innerHTML,lon:Number(value[0]),lat:Number(value[1])});
+    if(favButton.classList.contains('marked')){
+        //si llega aquí quiere decir que el elemento ya está
+        favorites = favorites.filter(function(e){return e.lat != obj.lat && e.lon != obj.lon});
+        dissableClass('marked',favButton);
+    }else{
+        if(favorites.find((element) => element.lon == obj.lon && element.lat == obj.lat) == undefined){
+            favorites.push({city:document.querySelector('#city-name').innerHTML,lon:Number(value[0]),lat:Number(value[1])});
+            toggleClass('marked',favButton);
+        }
     }
     favStorage.setItem('favorites',JSON.stringify(favorites));
 });
 
+favButton.addEventListener('mouseover',function(){
+    if(favButton.classList.contains('marked')){
+        document.querySelector('#save-message').innerHTML = 'Quitar Ubicación';
+    }else{
+        document.querySelector('#save-message').innerHTML = 'Guardar Ubicación';
+    }
+});
 
 document.addEventListener('click',function(){
     toggleClass('hidden',suggestions);
 });
-
