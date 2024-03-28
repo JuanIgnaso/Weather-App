@@ -1,5 +1,11 @@
 
-
+/**
+ * Carga la lista de ciudades que coincidan con lo que el usuario está escribiendo en el input text del formulario.
+ * @param {*} sender el que envía los datos
+ * @param {*} target donde se va a mostrar
+ * @param {*} api_key api key de OpenWeather
+ * @param {*} coords
+ */
 export async function getCitiesOcurrences(sender,target,api_key,coords){
 
     target.innerHTML = '';
