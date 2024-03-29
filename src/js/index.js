@@ -82,7 +82,7 @@ async function getWeatherInfo(poblacion){
  */
 function showCurrentWeather(informacion){
     if(favorites.find((element) => element.lon == informacion.current.coord.lon && element.lat == informacion.current.coord.lat) != undefined){
-        favButton.classList.toggle('marked');
+        toggleClass('marked',favButton);
     }else{
         favButton.classList.remove('marked');
     }
@@ -221,7 +221,7 @@ cityInput.addEventListener('keyup',async function(){
 appForm.addEventListener('submit',async event => {
     event.preventDefault();//<- prevenir la recarga de la página al hacer un submit
     const ciudad = cityInput.value;
-    if(ciudad){
+    if(ciudad || (coords.lat != undefined && coords.lon != undefined)){
         try {
             const infoTiempo = await getWeatherInfo(ciudad);
             showCurrentWeather(infoTiempo);
@@ -245,7 +245,7 @@ favoritesBtn.addEventListener('click',function(){
         favorites.forEach(element => {
             let li = document.createElement('li');
             li.setAttribute('class','fav-element-wrapper');
-            li.innerHTML= element.city + '<span class="text-base close hover:cursor-pointer">&times;</span>';
+            li.innerHTML= element.city + '<span class="text-base close hover:cursor-pointer" >&times;</span>';
             li.querySelector('.close').addEventListener('click',function(){
                 favorites = favorites.filter(function(e){return e !== element});
                 favStorage.setItem('favorites',JSON.stringify(favorites));

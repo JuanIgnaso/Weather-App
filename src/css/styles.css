@@ -932,6 +932,10 @@ body * {
   font-weight: 800;
 }
 
+.fav-element-wrapper:active{
+  background-color: rgb(10 10 10 / 0.75);
+}
+
 @media (prefers-color-scheme: dark){
   .fav-element-wrapper:hover{
     --tw-text-opacity: 1;

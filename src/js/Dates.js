@@ -3,6 +3,8 @@
  * @param {*} day
  * @returns string
  */
+
+
 export function getDayOfWeek(day){
     return ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'].at(day);
 }
@@ -15,3 +17,5 @@ export function getDayOfWeek(day){
 export function getMonthOfYear(month){
     return ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'].at(month);
 }
+
+
