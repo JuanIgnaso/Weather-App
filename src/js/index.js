@@ -1,5 +1,4 @@
-/** JAVASCRIPT PRINCIPAL, EL INDEX
-            ESTRUCTURA:
+/**  ESTRUCTURA DEL JAVASCRIPT PRINCIPAL
             1-Imports
             2-Variables
             3-Funciones
@@ -16,36 +15,26 @@ import { modalData } from "./modalData.js";
 import { changeScreenAppearance } from "./changeDayGradiant.js";
 
 /*VARIABLES A UTILIZAR-------------------------------------------------------*/
-const appForm = document.getElementById('formularioTiempo');
-
-//input donde se escribe la búsqueda
-const cityInput = document.querySelector('#ciudadInput');
+const cityInput = document.querySelector('#ciudadInput');//input donde se escribe la búsqueda
 const api_key = 'b36342eefc788b8e4ccb10ae5c94bcd3';
-
-//Pantalla donde se muestra el tiempo
-let screen = document.querySelector('#weather-screen');
+let screen = document.querySelector('#weather-screen');//Pantalla donde se muestra el tiempo
 const forecastTableBody = document.querySelector('#tableBody');
 const forecastTable = document.querySelector('#tableContent');
-const nodata = document.querySelector('#no-data');
 let currentCoords = document.querySelector('#coords');
 
 //div que muestra las ocurrencias
 const suggestions = document.querySelector('#results');
 
-
 let coords = {lon:undefined,lat:undefined};
 
-//LocalStorage
-const favStorage = window.localStorage;
+const favLocalStorage = window.localStorage;
 
-//Favoritos
-let favorites = [];
+let favorites_array = [];
 
 //Botón de marcar favorito
 const favButton = document.querySelector('#mark-favorite');
 
 //Mostrar favoritos
-let favoritesBtn = document.querySelector('#show-favorites');
 let favoritesList = document.querySelector('#fav-list');
 
 /*-FUNCIONES DEL SCRIPT -------------------------------------------------------------------------------*/
@@ -69,7 +58,6 @@ async function getWeatherInfo(poblacion){
         throw new Error('No se ha podido recibir información del tiempo');
     }
 
-
     coords = {lon:undefined,lat:undefined};
 
     return {'current': await responseCurrent.json(),'forecast': await responseForecast.json()};
@@ -81,7 +69,7 @@ async function getWeatherInfo(poblacion){
  * @param {object} informacion
  */
 function showCurrentWeather(informacion){
-    if(favorites.find((element) => element.lon == informacion.current.coord.lon && element.lat == informacion.current.coord.lat) != undefined){
+    if(favorites_array.find((element) => element.lon == informacion.current.coord.lon && element.lat == informacion.current.coord.lat) != undefined){
         toggleClass('marked',favButton);
     }else{
         favButton.classList.remove('marked');
@@ -115,13 +103,14 @@ function showCurrentWeather(informacion){
     showForecast(informacion.forecast.list); //Mostrar la previsión a 5 días
 }
 
+
 /**
  * Carga la previsión del tiempo a 5 días en la tabla de previsión del tiempo
  * @param {object} informacion
  */
 function showForecast(informacion){
 
-    toggleClass('hidden',nodata);
+    toggleClass('hidden',document.querySelector('#sin-datos'));
 
     forecastTableBody.innerHTML = '';
     let fecha = new Date();
@@ -188,13 +177,14 @@ function showError(target,text){
     target.innerHTML = text
 }
 
+
 /**
  * Limpia el contenido de la pantalla y de la tabla de previsión del tiempo
  */
 function clearScreenContent(){
     forecastTableBody.innerHTML = '';
 
-    dissableClass('hidden',nodata);
+    dissableClass('hidden',document.querySelector('#sin-datos'));
     toggleClass('hidden',forecastTable);
     toggleClass('neutral',screen);
 
@@ -217,8 +207,9 @@ cityInput.addEventListener('keyup',async function(){
     }
 });
 
-//Buscar información del tiempo
-appForm.addEventListener('submit',async event => {
+
+//Añadir eventlistener al formulario para buscar el tiempo
+document.getElementById('formularioTiempo').addEventListener('submit',async event => {
     event.preventDefault();//<- prevenir la recarga de la página al hacer un submit
     const ciudad = cityInput.value;
     if(ciudad || (coords.lat != undefined && coords.lon != undefined)){
@@ -227,7 +218,6 @@ appForm.addEventListener('submit',async event => {
             showCurrentWeather(infoTiempo);
             console.log(coords);
         } catch (error) {
-            //mostrar el error
             showError(document.querySelector('#mensaje_error'),error);
         }
     }
@@ -235,20 +225,21 @@ appForm.addEventListener('submit',async event => {
 });
 
 //FAVORITOS------------------------------------------------------------------------------------------------------
-//Cargar dropdown de favoritos
-favoritesBtn.addEventListener('click',function(){
+//Botón para mostrar los favoritos
+document.querySelector('#show-favorites').addEventListener('click',function(){
     favoritesList.parentNode.classList.toggle('hidden');
     favoritesList.innerHTML = '';
-    if(favorites.length == 0){
+    if(favorites_array.length == 0){
         favoritesList.innerHTML = '<li class="fav-element-wrapper"><span>No se encuentran elementos</span></li>';
     }else{
-        favorites.forEach(element => {
+        //Cargar la lista si el array tiene elementos
+        favorites_array.forEach(element => {
             let li = document.createElement('li');
             li.setAttribute('class','fav-element-wrapper');
             li.innerHTML= element.city + '<span class="text-base close hover:cursor-pointer" >&times;</span>';
             li.querySelector('.close').addEventListener('click',function(){
-                favorites = favorites.filter(function(e){return e !== element});
-                favStorage.setItem('favorites',JSON.stringify(favorites));
+                favorites_array = favorites_array.filter(function(e){return e !== element});
+                favLocalStorage.setItem('favorites',JSON.stringify(favorites_array));
                 this.parentNode.remove();
             });
             li.addEventListener('click',function(){coords.lat = element.lat; coords.lon = element.lon; console.log(coords)});
@@ -257,12 +248,14 @@ favoritesBtn.addEventListener('click',function(){
     }
 });
 
+
 //Cargar ubicaciones guardadas en LocalStorage
 window.addEventListener('load',function(){
-    if(favStorage.getItem('favorites') != null){
-       favorites = JSON.parse(favStorage.getItem('favorites'));
+    if(favLocalStorage.getItem('favorites') != null){
+       favorites_array = JSON.parse(favLocalStorage.getItem('favorites'));
     }
 });
+
 
 //Guardar en favs y actualizar localStorage
 favButton.addEventListener('click',function(){
@@ -270,15 +263,15 @@ favButton.addEventListener('click',function(){
     let obj = {lon:Number(value[0]),lat:Number(value[1])};
     if(favButton.classList.contains('marked')){
         //si llega aquí quiere decir que el elemento ya está
-        favorites = favorites.filter(function(e){return e.lat != obj.lat && e.lon != obj.lon});
+        favorites_array = favorites_array.filter(function(e){return e.lat != obj.lat && e.lon != obj.lon});
         dissableClass('marked',favButton);
     }else{
-        if(favorites.find((element) => element.lon == obj.lon && element.lat == obj.lat) == undefined){
-            favorites.push({city:document.querySelector('#city-name').innerHTML,lon:Number(value[0]),lat:Number(value[1])});
+        if(favorites_array.find((element) => element.lon == obj.lon && element.lat == obj.lat) == undefined){
+            favorites_array.push({city:document.querySelector('#city-name').innerHTML,lon:Number(value[0]),lat:Number(value[1])});
             toggleClass('marked',favButton);
         }
     }
-    favStorage.setItem('favorites',JSON.stringify(favorites));
+    favLocalStorage.setItem('favorites',JSON.stringify(favorites_array));
 });
 
 favButton.addEventListener('mouseover',function(){
@@ -289,6 +282,4 @@ favButton.addEventListener('mouseover',function(){
     }
 });
 
-document.addEventListener('click',function(){
-    toggleClass('hidden',suggestions);
-});
+document.addEventListener('click',() => {toggleClass('hidden',suggestions);}); // Ocultar/Mostrar barra de sugerencias
