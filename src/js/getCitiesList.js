@@ -12,7 +12,7 @@ export async function getCitiesOcurrences(sender,target,api_key,coords){
     let val = sender.value;
     if(val.length != 0){
         target.innerHTML = '';
-        let cities = `http://api.openweathermap.org/geo/1.0/direct?q=${val}&limit=5&appid=${api_key}&lang=sp`;
+        let cities = `https://api.openweathermap.org/geo/1.0/direct?q=${val}&limit=5&appid=${api_key}&lang=sp`;
         let list = await fetch(cities);
         let a = await list.json();
         a.forEach(element => {
