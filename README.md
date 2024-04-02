@@ -36,4 +36,34 @@ Más abajo tendrás un desplegable que mostrará la previsión para las siguient
 ## Requisitos para ejecutar la Aplicación
 La Aplicación solo require de que tu equipo tenga **instalado Docker** sea **Docker CLI** o **Docker Desktop**
 
+## Obtener la Aplicación
+Para poder obtener,usar o probar la aplicación hay dos maneras de hacerlo, ambas requieren de cumplir los **Requisitos**
+
+### Instalar la aplicación en **Releases**
+![opción de Releases](https://github.com/JuanIgnaso/Weather-App/assets/104755375/bf773d78-6bf6-4848-aa6f-7e5cda2f0f52)
+
+Una vez bajada, dentro de la carpeta raíz del proyecto ejecuta los siguientes comandos en orden:
+```
+docker build -t weather-app .
+```
+
+```
+docker run --name nombre-de-contenedor -d -p 443:443  weather-app
+```
+
+
+### Docker pull
+También te puedes bajar la imagen directamente de Docker con:
+```
+docker pull juanignaso/weather-app
+```
+
+Y una vez bajada la imagen la puedes usar con:
+
+```
+docker run --name nombre-de-contenedor -d -p 443:443  juanignaso/weather-app
+```
+
+
+
 
